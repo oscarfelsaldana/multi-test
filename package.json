@@ -1,0 +1,17 @@
+{
+  "name": "multi-test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "cypress:open": "cypress open",
+    "sequential-test": "cypress run --spec \"C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/login/login_modulos.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/gruposDeServicio/grupo_de_servicio.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/servicios/servicios.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/especialidades/especialidades.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/sedes/sedes.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/aseguradoras/aseguradoras.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/medico/medicos.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/paciente/paciente.cy.js\""
+  },
+  "author": "Oscar",
+  "license": "ISC",
+  "dependencies": {
+    "cypress": "^13.6.3",
+    "moment": "^2.30.1"
+  }
+}
