@@ -15,12 +15,12 @@ describe("test login", () => {
 
   it("acaceso correcto y comprueba modulos", () => {
     cy.get("#email").type("jhohanf.silva@gmail.com");
-    cy.get("#password").type("Multisalud@2023");
+    cy.get("#password").type("Multisalud@2024");
 
     cy.intercept("GET", "https://api-dev.citas-multisalud.com/v1/modules/operator").as("modulos");
 
     cy.get("button").contains("Iniciar sesión").click();
-    cy.get("h2").contains("IPS Multisalud").should("be.visible");
+    cy.get("h2").contains("MultiSalud SAS").should("be.visible");
 
     var modules = [];
     cy.wait("@modulos").then((interception) => {
