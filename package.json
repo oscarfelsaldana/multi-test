@@ -6,12 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "cypress:open": "cypress open",
-    "sequential-test": "cypress run --spec \"C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/login/login_modulos.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/gruposDeServicio/grupo_de_servicio.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/servicios/servicios.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/especialidades/especialidades.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/sedes/sedes.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/aseguradoras/aseguradoras.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/medico/medicos.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/paciente/paciente.cy.js\""
+    "citas-test": "cypress run --spec \"C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/login/login_modulos.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/gruposDeServicio/grupo_de_servicio.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/servicios/servicios.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/especialidades/especialidades.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/sedes/sedes.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/aseguradoras/aseguradoras.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/medico/medicos.cy.js,C:/Users/oscar/Documents/cypress/multi-test/cypress/e2e/cms/modulos/citas/configuracion/paciente/paciente.cy.js\""
   },
   "author": "Oscar",
   "license": "ISC",
   "dependencies": {
     "cypress": "^13.14.2",
     "moment": "^2.30.1"
+  },
+  "devDependencies": {
+    "@4tw/cypress-drag-drop": "^2.3.0"
   }
 }

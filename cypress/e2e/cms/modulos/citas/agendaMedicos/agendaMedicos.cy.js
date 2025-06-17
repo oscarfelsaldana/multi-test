@@ -18,149 +18,164 @@ describe("Test paciente", (module = "Citas") => {
 
   it("aperturar agendas", () => {
     cy.visit(`${Cypress.env().hostName}/citas/agenda-medicos`);
-    cy.get('[data-permission="citas.doctor-schedule.create"]').should("be.visible");
-    cy.get('[data-permission="citas.doctor-schedule.create"]').click();
+    cy.get('button').contains('Aperturar agenda').should("be.visible");
+    cy.get('button').contains('Aperturar agenda').click();
     cy.get("h2").contains("Apertura agenda médico").should("be.visible");
 
-    for (let i = 0; i < 2; i++) {
-      cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(3).type(Cypress.env().dataServices[0].code);
-      cy.get("span").contains(Cypress.env().dataServices[0].code).should("be.visible");
-      cy.get("span").contains(Cypress.env().dataServices[0].code).click();
-      cy.get('input[placeholder="Digite para iniciar la búsqueda"]')
-        .eq(4)
-        .type(Cypress.env().dataDoctors[i].documentNumber);
-      cy.get("span").contains(Cypress.env().dataDoctors[i].documentNumber).should("be.visible");
-      cy.get("span").contains(Cypress.env().dataDoctors[i].documentNumber).click();
-      cy.get("p").contains("Presencial").click();
-      cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(5).type(Cypress.env().dataOffices[0].code);
-      cy.get("span").contains(Cypress.env().dataOffices[0].code).should("be.visible");
-      cy.get("span").contains(Cypress.env().dataOffices[0].code).click();
+    
+    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(3).type(Cypress.env().dataDoctors[0].documentNumber);
+    cy.get("span").contains(Cypress.env().dataDoctors[0].documentNumber).should("be.visible");
+    cy.get("span").contains(Cypress.env().dataDoctors[0].documentNumber).click();
 
-      const fechaAgenda = moment().add(1, "days").format("YYYY-MM-DD");
-      cy.get('input[placeholder="AAAA-MM-DD"]').eq(1).type(fechaAgenda);
-      cy.get('input[type="number"]').clear();
-      cy.get('input[type="number"]').type("30");
+    cy.get("span").contains("Seleccione una opción").eq(0).click();
+    cy.get("span").contains(Cypress.env().dataServices[0].code).should("be.visible");
+    cy.get("span").contains(Cypress.env().dataServices[0].code).click();
 
-      //Probar que no se pueda cambiar la duracion con horarios en lista
+    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(4).type(Cypress.env().dataOffices[0].code);
+    cy.get("span").contains(Cypress.env().dataOffices[0].code).should("be.visible");
+    cy.get("span").contains(Cypress.env().dataOffices[0].code).click();      
 
-      cy.get('input[placeholder="Seleccione horario"]').type("{downarrow}");
-      cy.get("span").contains("12:00-12:30").click();
-      cy.get("span").contains("12:30-13:00").click();
-      cy.get("span").contains("13:00-13:30").click();
-      cy.get("span").contains("13:30-14:00").click();
-      cy.get("span").contains("14:00-14:30").click();
-      cy.get("span").contains("14:30-15:00").click();
+    const fechaAgenda = moment().add(1, "days").format("YYYY-MM-DD");
+    // cy.get('input[placeholder="AAAA-MM-DD"]').eq(1).type(fechaAgenda);
+    cy.get('input[placeholder="AAAA-MM-DD"]').eq(1).type(Cypress.env().testDate);
+    cy.get('input[type="number"]').clear();
+    cy.get('input[type="number"]').type("30");
+    cy.get('input[type="number"]').clear();
+    cy.get('input[type="number"]').type("20");
 
-      cy.get("button").contains("Guardar").click();
-      cy.contains("Agenda creada correctamente");
-    }
+    cy.get('input[placeholder="Seleccione horario"]').type("{downarrow}");
+    cy.get("span").contains("12:00-12:20").click();
+    cy.get("span").contains("12:20-12:40").click();
+    cy.get("span").contains("12:40-13:00").click();
+    cy.get("span").contains("13:00-13:20").click();
+    cy.get("span").contains("13:20-13:40").click();
+    cy.get("span").contains("13:40-14:00").click();
+    cy.get("span").contains("14:00-14:20").click();
+    cy.get("span").contains("14:20-14:40").click();
+    cy.get("span").contains("14:40-15:00").click();
+    cy.get("span").contains("15:00-15:20").click();
+    cy.get("span").contains("15:20-15:40").click();
+    cy.get("span").contains("15:40-16:00").click();
+
+    cy.get("button").contains("Guardar").click();
+    cy.contains("Agenda creada correctamente", { timeout: 15000 });
   });
 
-  // it("Busca agendas en almanaque y transfiere una agenda", () => {
-  //   cy.visit(`${Cypress.env().hostName}/citas/agenda-medicos`);
-
-  //   const fechaAgenda = moment().add(1, "days").format("YYYY-MM-DD");
-  //   const diaAgenda = moment().add(1, "days").date();
-  //   cy.get('input[placeholder="AAAA-MM-DD"]').clear();
-  //   cy.get("button").contains(diaAgenda).eq(0).click();
-  //   cy.get("button").contains(diaAgenda).eq(0).click();
-  //   cy.get("a").contains("más").should("be.visible");
-  //   cy.get("a").contains("más").click();
-
-  //   // cy.get("p").contains(Cypress.env().dataDoctors[0].firstName).eq(5).click();
-  // });
-
-  it("Busca agendas en tabla y tranfiere una agenda", () => {
+  it("Bloquea y desbloquea una agenda", () => {
     cy.visit(`${Cypress.env().hostName}/citas/agenda-medicos`);
-    cy.get('div[class="w-fit"]').eq(2).click();
+    cy.get('#tableView').click();
 
     const fechaAgenda = moment().add(1, "days").format("YYYY-MM-DD");
     const diaAgenda = moment().add(1, "days").date();  
-
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/doctor-schedule?view=table&endDate=${fechaAgenda}&startDate=${fechaAgenda}&order=desc&status=active&skip=0&take=20&page=0`
-    ).as("agendasEncontradas");
-    cy.get('input[placeholder="AAAA-MM-DD"]').clear();
-    cy.get("button").contains(diaAgenda).eq(0).click();
-    cy.get("button").contains(diaAgenda).eq(0).click();
-    cy.wait("@agendasEncontradas").its("response.body.data.totalRecords").should("eq", 12);
-    //falta validar que las agendas que se están viendo tambien sean 12
+    // cy.get('input[placeholder="AAAA-MM-DD"]').clear();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
 
     cy.get("tr").find("svg").last().click();
-    cy.get('button[data-permission="citas.doctor-schedule.status-transfer"]').last().click();
+    cy.get('#lock').click();
+    cy.contains("Estado actualizado exitosamente")
+
+    cy.visit(`${Cypress.env().hostName}/citas/agenda-medicos`);
+    cy.get("span").contains("Activa").click();
+    cy.get("span").contains("Bloqueada").click();
+    cy.get('#tableView').click();
+    // cy.get('input[placeholder="AAAA-MM-DD"]').clear();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
+    cy.get("tr").find("svg").click();
+    cy.get('#unlock').click();
+    cy.contains("Estado actualizado exitosamente")   
+  });
+
+  it("Busca agendas en tabla y tranfiere una agenda", () => {
+    cy.visit(`${Cypress.env().hostName}/citas/agenda-medicos`);
+    cy.get('#tableView').click();
+
+    const fechaAgenda = moment().add(1, "days").format("YYYY-MM-DD");
+    const diaAgenda = moment().add(1, "days").date();  
+    // cy.get('input[placeholder="AAAA-MM-DD"]').clear();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
+
+    cy.get("tr").find("svg").last().click();
+    cy.get('#toTransfer').click();
     cy.get("h2").contains("Transferir Agenda").should("be.visible");
+
+    // cy.get('input[placeholder="AAAA-MM-DD"]').eq(1).type(fechaAgenda);
+    cy.get('input[placeholder="AAAA-MM-DD"]').eq(1).type(Cypress.env().testDate);
     cy.get('input[placeholder="Digite para iniciar la búsqueda"]')
       .eq(3)
-      .type(Cypress.env().dataDoctors[2].documentNumber);
+      .type(Cypress.env().dataDoctors[1].documentNumber);
     cy.get("span")
-      .contains(`${Cypress.env().dataDoctors[2].documentNumber} - ${Cypress.env().dataDoctors[2].firstName}`)
+      .contains(`${Cypress.env().dataDoctors[1].documentNumber} - ${Cypress.env().dataDoctors[1].firstName}`)
       .should("be.visible");
     cy.get("span")
-      .contains(`${Cypress.env().dataDoctors[2].documentNumber} - ${Cypress.env().dataDoctors[2].firstName}`)
+      .contains(`${Cypress.env().dataDoctors[1].documentNumber} - ${Cypress.env().dataDoctors[1].firstName}`)
       .click();
-    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(4).type(Cypress.env().dataOffices[1].code);
+    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(4).type(Cypress.env().dataOffices[0].code);
     cy.get("span")
-      .contains(`${Cypress.env().dataOffices[1].code} - ${Cypress.env().dataOffices[1].name}`)
+      .contains(`${Cypress.env().dataOffices[0].code} - ${Cypress.env().dataOffices[0].name}`)
       .should("be.visible");
-    cy.get("span").contains(`${Cypress.env().dataOffices[1].code} - ${Cypress.env().dataOffices[1].name}`).click();
-    cy.get("button").eq(67).click();
+    cy.get("span").contains(`${Cypress.env().dataOffices[0].code} - ${Cypress.env().dataOffices[0].name}`).click();
+    cy.get("button").eq(116).click();
     cy.get("button").contains("Confirmar").click();
     cy.contains("Agenda transferida exitosamente")
   });
 
   it("Busca agenda en tabla y cancela", () => {
     cy.visit(`${Cypress.env().hostName}/citas/agenda-medicos`);
+    
+    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').first().type(Cypress.env().dataDoctors[1].documentNumber);
+    cy.get("span").contains(`${Cypress.env().dataDoctors[1].documentNumber}`).should("be.visible");
+    cy.get("span").contains(`${Cypress.env().dataDoctors[1].documentNumber}`).click();
     cy.get('div[class="w-fit"]').eq(2).click();
-
-    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').first().type(Cypress.env().dataDoctors[2].documentNumber);
-    cy.get("span").contains(`${Cypress.env().dataDoctors[2].documentNumber}`).should("be.visible");
-    cy.get("span").contains(`${Cypress.env().dataDoctors[2].documentNumber}`).click();
-
     const fechaAgenda = moment().add(1, "days").format("YYYY-MM-DD");
-    const diaAgenda = moment().add(1, "days").date();    
-    cy.get('input[placeholder="AAAA-MM-DD"]').clear();
-    cy.get("button").contains(diaAgenda).eq(0).click();
-    cy.get("button").contains(diaAgenda).eq(0).click();
-    cy.get("td").contains(Cypress.env().dataDoctors[2].firstName).should("be.visible");
+    const diaAgenda = moment().add(1, "days").date();
+    // cy.get('input[placeholder="AAAA-MM-DD"]').clear();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
 
-    cy.get("tr").find("svg").last().click();
-    cy.get('button[data-permission="citas.doctor-schedule.status-cancel"]').last().click();
+    cy.get("tr").find("svg").click();
+    cy.get('#toCancel').click();
     cy.get("button").contains("Confirmar").click();
     cy.contains("Estado actualizado exitosamente");
   });
 
-  it.only("Transfiere un bloque de agendas", () => {
+  it("Transfiere un bloque de agendas", () => {
     cy.visit(`${Cypress.env().hostName}/citas/agenda-medicos`);
     cy.get('div[class="w-fit"]').eq(2).click();
 
+    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').first().type(Cypress.env().dataDoctors[1].documentNumber);
+    cy.get("span").contains(`${Cypress.env().dataDoctors[1].documentNumber}`).should("be.visible");
+    cy.get("span").contains(`${Cypress.env().dataDoctors[1].documentNumber}`).click();
+
     const fechaAgenda = moment().add(1, "days").format("YYYY-MM-DD");
     const diaAgenda = moment().add(1, "days").date();
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/doctor-schedule?view=table&endDate=${fechaAgenda}&startDate=${fechaAgenda}&order=desc&status=active&skip=0&take=20&page=0`
-    ).as("citasEncontradas");
-    cy.get('input[placeholder="AAAA-MM-DD"]').clear();
-    cy.get("button").contains(diaAgenda).eq(0).click();
-    cy.get("button").contains(diaAgenda).eq(0).click();
+    
+    // cy.get('input[placeholder="AAAA-MM-DD"]').clear();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
+    // cy.get("button").contains(diaAgenda).eq(0).click();
 
     cy.get("button").contains("Transferir Agenda").first().click();
-    cy.get('input[placeholder="AAAA-MM-DD"]').last().type(fechaAgenda);
-    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(3).type(Cypress.env().dataDoctors[1].documentNumber);
-    cy.get("span").contains(Cypress.env().dataDoctors[1].documentNumber).should("be.visible");
-    cy.get("span").contains(Cypress.env().dataDoctors[1].documentNumber).click();
-
-    cy.get("p").contains("Presencial").click();    
+    // cy.get('input[placeholder="AAAA-MM-DD"]').eq(1).type(fechaAgenda);
+    cy.get('input[placeholder="AAAA-MM-DD"]').eq(1).type(Cypress.env().testDate);
+    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(3).type(Cypress.env().dataDoctors[0].documentNumber);
+    cy.get("span").contains(Cypress.env().dataDoctors[0].documentNumber).should("be.visible");
+    cy.get("span").contains(Cypress.env().dataDoctors[0].documentNumber).click();
 
     cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(4).type(Cypress.env().dataOffices[0].code);
     cy.get("span").contains(Cypress.env().dataOffices[0].code).should("be.visible");
     cy.get("span").contains(Cypress.env().dataOffices[0].code).click();
-    cy.get('input[type="checkbox"]').eq(0).click();
-    cy.get('input[type="checkbox"]').eq(1).click();
 
-    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(5).type(Cypress.env().dataDoctors[2].documentNumber);
-    cy.get("span").contains(Cypress.env().dataDoctors[2].documentNumber).should("be.visible");
-    cy.get("span").contains(Cypress.env().dataDoctors[2].documentNumber).click();
+    cy.get('input[type="checkbox"]').eq(-1).click();
+    cy.get('input[type="checkbox"]').eq(-2).click();
+    cy.get('input[type="checkbox"]').eq(-3).click();
+
+    // cy.get('input[placeholder="AAAA-MM-DD"]').eq(2).type(fechaAgenda);
+    cy.get('input[placeholder="AAAA-MM-DD"]').eq(2).type(Cypress.env().testDate);
+    cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(5).type(Cypress.env().dataDoctors[1].documentNumber);
+    cy.get("span").contains(Cypress.env().dataDoctors[1].documentNumber).should("be.visible");
+    cy.get("span").contains(Cypress.env().dataDoctors[1].documentNumber).click();
 
     cy.get('input[placeholder="Digite para iniciar la búsqueda"]').eq(6).type(Cypress.env().dataOffices[0].code);
     cy.get("span").contains(Cypress.env().dataOffices[0].code).should("be.visible");

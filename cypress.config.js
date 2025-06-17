@@ -1,18 +1,22 @@
 const { defineConfig } = require("cypress");
 
-var consec = 1;
+var consec = 24110400;
 module.exports = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
-      // implement node event listeners here
     },
   },
   env: {
-    hostName: "https://dev.citas-multisalud.com",
-    // hostName: "http://localhost:3000",
-    urlApi: "https://api-dev.citas-multisalud.com",
-    // urlApi: "http://localhost:8080",
+    hostName: "http://localhost:3000",
+    urlApi: "http://localhost:8080",
+    // hostName: "https://dev.citas-multisalud.com",
+    // urlApi: "https://api-dev.citas-multisalud.com",
+    testDate: "2024-11-12",
     dataOperators: [
+      // {
+      //   email: "jhohanf.silva@gmail.com",
+      //   password: "Multisalud@2024"
+      // },
       {
         email: "oscarsaldana1108@gmail.com",
         password: "Multisalud@2024"
@@ -30,95 +34,58 @@ module.exports = defineConfig({
         email: "superadmin_cy@gmail.com",
         password: "Multi@2023",
         company: "EmpresaCypress",
-      },
-      {
-        documentType: "Cédula de ciudadanía",
-        documentNumber: "1000000001",
-        firstName: "Operador",
-        firstSurname: "Cypress",
-        gender: "Masculino",
-        birthDate: "2000-01-01",
-        phoneNumber: "3127143001",
-        email: "operador1Cy@gmail.com",
-        password: "123456",
-      },
+      },     
     ],
     dataServiceGroup: [
       {
-        code: "200002",
-        description: "GrupoServicioCy",
+        code: "GRUPSERV" + consec,
+        description: "GrupoServicioCy" + consec,
       },
     ],
     dataServices: [
       {
-        code: "200002",
-        description: "Medicina general Cy",
-      },
-      {
-        code: "200003",
-        description: "Fisioterapia Cy",
-      },
+        code: "SERVICIO" + consec,
+        description: "Servicio" + consec + " Cy",
+      }
     ],
     dataSpecializations: [
       {
-        code: "200002",
-        description: "Medico familiar",
-      },
-      {
-        code: "200003",
-        description: "Fisioterapeuta Cy",
-      },
-      {
-        code: "200004",
-        description: "Neurologo Cy",
-      },
+        code: "ESPECIALIDAD" + consec,
+        description: "Especialidad" + consec,
+      },      
     ],
     dataOffices: [
       {
-        code: "200002",
-        name: "Sede1 Cy",
+        code: "SEDE00" + consec,
+        name: "Sede" + consec + " Cy",
         address: "Centro",
         district: "Centro",
         municipality: "Villavicencio",
         zone: "Urbana",
         phoneNumber: "3001234567",
         email: "pruebaCy@email.com",
-        manager: "Gerente1 Cy",
-      },
-      {
-        code: "200003",
-        name: "Sede2 Cy",
-        address: "Centro",
-        district: "Centro",
-        municipality: "Villavicencio",
-        zone: "Urbana",
-        phoneNumber: "3001234569",
-        email: "pruebaCy@email.com",
-        manager: "Gerente2 Cy",
-      },
+        manager: "Gerente1 Cy",        
+        startHourAttention: "600",        
+        endHourAttention: "1000p",       
+        enablingCode: "10000001",       
+      },      
     ],
     dataHealthCompanies: [
       {
-        code: "20000" + (consec + 1),
-        taxIDNumber: "1000000001",
-        name: "Aseguradora1 Cy",
+        code: "EPS0" + consec,
+        taxIDNumber: "100000000" + consec,
+        name: "Aseguradora" + consec + "Cy",
         regime: "Contributivo",
         address: "Caudal Villavicencio",
-      },
-      {
-        code: "20000" + (consec + 2),
-        taxIDNumber: "10000000002",
-        name: "Aseguradora2 Cy",
-        regime: "Subsidiado",
-        address: "Centro villavicencio",
-      },
+      },      
     ],
     dataPatients: [
       {
         documentType: "Cédula de ciudadanía",
-        documentNumber: "10000000001" + consec,
+        documentNumber: "10000" + consec,
         firstName: "Paciente1",
         firstSurname: "Cypress",
+        rhFactor: "O+",
         gender: "Masculino",
         ethnicity: "Otras etnias",
         birthDate: "2000-01-01",
@@ -127,89 +94,33 @@ module.exports = defineConfig({
         academicLevel: "Profesional",
         phoneNumber: "3127143001",
         secondPhoneNumber: "3127143001",
+        address: "Calle 1 #10-10",
         email: `paciente_${consec}Cy@gmail.com`,
-        healthCompanyCode: "20000" + (consec + 1),
-      },
-      {
-        documentType: "Cédula de ciudadanía",
-        documentNumber: "10000000002" + (consec + 1),
-        firstName: "Paciente2",
-        firstSurname: "Cypress",
-        gender: "Masculino",
-        ethnicity: "Indígena",
-        birthDate: "2000-01-01",
-        regime: "Contributivo",
-        municipality: "Villavicencio",
-        academicLevel: "Básica Secundaria",
-        phoneNumber: "3127143002",
-        secondPhoneNumber: "3127143002",
-        email: `paciente_${consec + 1}Cy@gmail.com`,
-        healthCompanyCode: "20000" + (consec + 1),
-      },
-      {
-        documentType: "Cédula de ciudadanía",
-        documentNumber: "10000000003" + (consec + 1),
-        firstName: "Paciente3",
-        firstSurname: "Cypress",
-        gender: "Masculino",
-        ethnicity: "Indígena",
-        birthDate: "2000-01-01",
-        regime: "Subsidiado",
-        municipality: "Villavicencio",
-        academicLevel: "Básica Secundaria",
-        phoneNumber: "3127143003",
-        secondPhoneNumber: "3127143003",
-        email: `paciente_${consec + 2}Cy@gmail.com`,
-        healthCompanyCode: "20000" + (consec + 2),
-      },
-      {
-        documentType: "Cédula de ciudadanía",
-        documentNumber: "10000000004" + (consec + 1),
-        firstName: "Paciente4",
-        firstSurname: "Cypress",
-        gender: "Femenino",
-        ethnicity: "Otras etnias",
-        birthDate: "2000-01-01",
-        regime: "Subsidiado",
-        municipality: "Villavicencio",
-        academicLevel: "Básica Secundaria",
-        phoneNumber: "3127143004",
-        secondPhoneNumber: "3127143004",
-        email: `paciente_${consec + 3}Cy@gmail.com`,
-        healthCompanyCode: "20000" + (consec + 2),
-      },
+      }      
     ],
     dataDoctors: [
       {
         documentType: "Cédula de ciudadanía",
-        documentNumber: "10000000001" + consec,
+        documentNumber: `1121000${consec}`,
         firstName: "Doctor1",
         firstSurname: "Cypress",
         gender: "Masculino",
         birthDate: "2000-01-01",
         phoneNumber: "3127143001",
-        email: `doctor_${consec}Cy@gmail.com`,
+        medicalRecord: "1110" + consec,
+        email: `doctor_${consec}Cy@ejemplo.com`,
       },
       {
         documentType: "Cédula de ciudadanía",
-        documentNumber: "10000000002" + (consec + 1),
+        documentNumber: `1121000${consec + 1}`,
         firstName: "Doctor2",
         firstSurname: "Cypress",
         gender: "Masculino",
         birthDate: "2000-01-01",
-        phoneNumber: "3127143001",
-        email: `doctor_${consec + 1}Cy@gmail.com`,
-      },
-      {
-        documentType: "Cédula de ciudadanía",
-        documentNumber: "10000000002" + (consec + 2),
-        firstName: "Doctor3",
-        firstSurname: "Cypress",
-        gender: "Masculino",
-        birthDate: "2000-01-01",
-        phoneNumber: "3127143001",
-        email: `doctor_${consec + 2}Cy@gmail.com`,
-      },
+        phoneNumber: "3127143002",
+        medicalRecord: `1110${consec + 1}`,
+        email: `doctor_${consec + 1}Cy@ejemplo.com`,
+      }
     ],
     dataCompanies: [
       {
@@ -553,6 +464,12 @@ module.exports = defineConfig({
         module: "Citas",
         description: "Cambiar estatus de grupo de servicio",
       },
+    ],
+    dataTemplates: [
+      {
+        name: "Plantilla-Cypress",
+        description: "Plantilla creada por Cypress",
+      }
     ],
   },
 });

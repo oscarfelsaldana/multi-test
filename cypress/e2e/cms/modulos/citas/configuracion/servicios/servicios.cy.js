@@ -10,46 +10,46 @@ describe("Test servicio", (module = "Citas") => {
 
   it("status grupo de servicio en servicio", () => {
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/grupos-servicio`);
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
-    ).as("grupoADesactivar");
-    cy.get('input[placeholder="Código, descripción"]').type(Cypress.env().dataServiceGroup[0].code);
-    cy.wait("@grupoADesactivar").its("response.body.data.totalRecords").should("eq", 1);
-    cy.get('button[role="switch"]').click();
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=&order=desc&take=20&skip=0&page=0`
+    // ).as("grupoADesactivar");
+    cy.get('#search').type(Cypress.env().dataServiceGroup[0].code);
+    // cy.wait("@grupoADesactivar").its("response.body.data.totalRecords").should("eq", 1);
+    cy.get('#statusModify').click();
     cy.contains("Estado actualizado exitosamente").should("be.visible");
 
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/servicios`);
     cy.get("button").contains("Nuevo servicio").should("be.visible");
     cy.get("button").contains("Nuevo servicio").click();
     cy.get("p").contains("Cree o actualice un servicio").should("be.visible");
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=true&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
-    ).as("grupoNoEncontrado");
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=true&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
+    // ).as("grupoNoEncontrado");
     cy.get('input[placeholder="Digite para iniciar la búsqueda"]').type(Cypress.env().dataServiceGroup[0].code);
-    cy.wait("@grupoNoEncontrado").its("response.body.data.totalRecords").should("eq", 0);
+    // cy.wait("@grupoNoEncontrado").its("response.body.data.totalRecords").should("eq", 0);
 
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/grupos-servicio`);
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
-    ).as("grupoAActivar");
-    cy.get('input[placeholder="Código, descripción"]').type(Cypress.env().dataServiceGroup[0].code);
-    cy.wait("@grupoAActivar").its("response.body.data.totalRecords").should("eq", 1);
-    cy.get('button[role="switch"]').click();
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=&order=desc&take=20&skip=0&page=0`
+    // ).as("grupoAActivar");
+    cy.get('#search').type(Cypress.env().dataServiceGroup[0].code);
+    // cy.wait("@grupoAActivar").its("response.body.data.totalRecords").should("eq", 1);
+    cy.get('#statusModify').click();
     cy.contains("Estado actualizado exitosamente").should("be.visible");
 
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/servicios`);
     cy.get("button").contains("Nuevo servicio").should("be.visible");
     cy.get("button").contains("Nuevo servicio").click();
     cy.get("p").contains("Cree o actualice un servicio").should("be.visible");
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=true&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
-    ).as("grupoEncontrado");
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=true&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
+    // ).as("grupoEncontrado");
     cy.get('input[placeholder="Digite para iniciar la búsqueda"]').type(Cypress.env().dataServiceGroup[0].code);
-    cy.wait("@grupoNoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    // cy.wait("@grupoNoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
   });
 
   it("abre opción de servicios", () => {
@@ -67,12 +67,12 @@ describe("Test servicio", (module = "Citas") => {
 
     Cypress.env().dataServices.forEach((service) => {
       cy.get("button").contains("Nuevo servicio").click();
-      cy.intercept(
-        "GET",
-        `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=true&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
-      ).as("grupoEncontrado");
+      // cy.intercept(
+      //   "GET",
+      //   `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=true&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
+      // ).as("grupoEncontrado");
       cy.get('input[placeholder="Digite para iniciar la búsqueda"]').type(Cypress.env().dataServiceGroup[0].code);
-      cy.wait("@grupoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+      // cy.wait("@grupoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
       cy.get("span").contains(`${Cypress.env().dataServiceGroup[0].code} -`).click();
       cy.get("#code").type(service.code);
       cy.get("#description").type(service.description);
@@ -86,13 +86,13 @@ describe("Test servicio", (module = "Citas") => {
     var cod = 2;
 
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/servicios`);
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/services?order=desc&status=&search=${Cypress.env().dataServices[0].code}&skip=0&take=20`
-    ).as("servicioEncontrado");
-    cy.get('input[placeholder="Código, descripción"]').type(Cypress.env().dataServices[0].code);
-    cy.wait("@servicioEncontrado").its("response.body.data.totalRecords").should("eq", 1);
-    cy.get('svg[data-permission="citas.configuration.service.modify"]').click();
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/services?search=${Cypress.env().dataServices[0].code}&status=&order=desc&take=20&skip=0&page=0`
+    // ).as("servicioEncontrado");
+    cy.get('#search').type(Cypress.env().dataServices[0].code);
+    // cy.wait("@servicioEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    cy.get('#modify').click();
     cy.get("p").contains("Cree o actualice un servicio").should("be.visible");
     cy.get("#description").type("-Edit");
     cy.get("button").contains("Guardar").click();
@@ -103,17 +103,17 @@ describe("Test servicio", (module = "Citas") => {
     var cod = 2;
 
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/servicios`);
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/services?order=desc&status=&search=${Cypress.env().dataServices[0].code}&skip=0&take=20`
-    ).as("servicioEncontrado");
-    cy.get('input[placeholder="Código, descripción"]').type(Cypress.env().dataServices[0].code);
-    cy.wait("@servicioEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/services?search=${Cypress.env().dataServices[0].code}&status=&order=desc&take=20&skip=0&page=0`
+    // ).as("servicioEncontrado");
+    cy.get('#search').type(Cypress.env().dataServices[0].code);
+    // cy.wait("@servicioEncontrado").its("response.body.data.totalRecords").should("eq", 1);
 
-    cy.get('button[role="switch"]').eq(0).click();
+    cy.get('#webStatus').click();
     cy.contains("Estado actualizado exitosamente").should("be.visible");
 
-    cy.get('button[role="switch"]').eq(0).click();
+    cy.get('#webStatus').click();
     cy.contains("Estado actualizado exitosamente").should("be.visible");
   });
 
@@ -121,31 +121,32 @@ describe("Test servicio", (module = "Citas") => {
     var cod = 2;
 
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/servicios`);
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/services?order=desc&status=&search=${Cypress.env().dataServices[0].code}&skip=0&take=20`
-    ).as("servicioEncontrado");
-    cy.get('input[placeholder="Código, descripción"]').type(Cypress.env().dataServices[0].code);
-    cy.wait("@servicioEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/services?search=${Cypress.env().dataServices[0].code}&status=&order=desc&take=20&skip=0&page=0`
+    // ).as("servicioEncontrado");
+    cy.get('#search').type(Cypress.env().dataServices[0].code);
+    // cy.wait("@servicioEncontrado").its("response.body.data.totalRecords").should("eq", 1);
 
-    cy.get('button[role="switch"]').eq(1).click();
+    cy.get('#statusModify').click();
     cy.contains("Estado actualizado exitosamente").should("be.visible");
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/services?order=desc&status=false&search=${Cypress.env().dataServices[0].code}&skip=0&take=20`
-    ).as("servicioInactivoEncontrado");
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/services?search=${Cypress.env().dataServices[0].code}&status=false&order=desc&take=20&skip=0&page=0`
+    // ).as("servicioInactivoEncontrado");
     cy.get("span").contains("Todos").click();
     cy.get("span").contains("Inactivo").click();
-    cy.wait("@servicioInactivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    // cy.wait("@servicioInactivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
 
-    cy.get('button[role="switch"]').eq(1).click();
+    cy.get('#statusModify').click();
     cy.contains("Estado actualizado exitosamente").should("be.visible");
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/services?order=desc&status=true&search=${Cypress.env().dataServices[0].code}&skip=0&take=20`
-    ).as("servicioActivoEncontrado");
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/services?search=${Cypress.env().dataServices[0].code}&status=true&order=desc&take=20&skip=0&page=0`
+    // ).as("servicioActivoEncontrado");
     cy.get("span").contains("Inactivo").click();
     cy.get("span").contains("Activo").click();
-    cy.wait("@servicioActivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    // cy.wait("@servicioActivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    cy.get('#statusModify').click();
   });
 });

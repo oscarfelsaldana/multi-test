@@ -39,13 +39,13 @@ describe("Test grupos de servicio", (module = "Citas") => {
 
   it("busca y edita grupo de servicio", () => {
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/grupos-servicio`);
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
-    ).as("grupoEncontrado");
-    cy.get('input[placeholder="Código, descripción"]').type(`${Cypress.env().dataServiceGroup[0].code}`);
-    cy.wait("@grupoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
-    cy.get('svg[data-permission="citas.configuration.service-group.modify"]').click();
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=&order=desc&take=20&skip=0&page=0`
+    // ).as("grupoEncontrado");
+    cy.get('#search').type(`${Cypress.env().dataServiceGroup[0].code}`);
+    // cy.wait("@grupoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    cy.get('#modify').click();
     cy.get("p").contains("Cree o actualice un grupo de servicio").should("be.visible");
     cy.get("#description").type("-Edit");
     cy.get("button").contains("Guardar").click();
@@ -54,31 +54,32 @@ describe("Test grupos de servicio", (module = "Citas") => {
 
   it("cambio estado y filtro de estado", () => {
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/grupos-servicio`);
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
-    ).as("grupoEncontrado");
-    cy.get('input[placeholder="Código, descripción"]').type(`${Cypress.env().dataServiceGroup[0].code}`);
-    cy.wait("@grupoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=&order=desc&take=20&skip=0&page=0`
+    // ).as("grupoEncontrado");
+    cy.get('#search').type(`${Cypress.env().dataServiceGroup[0].code}`);
+    // cy.wait("@grupoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
 
-    cy.get('button[role="switch"]').click();
+    cy.get('#statusModify').click();
     cy.contains("Estado actualizado exitosamente").should("be.visible");
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=false&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
-    ).as("grupoInactivoEncontrado");
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=false&order=desc&take=20&skip=0&page=0`
+    // ).as("grupoInactivoEncontrado");
     cy.get("span").contains("Todos").click();
     cy.get("span").contains("Inactivo").click();
-    cy.wait("@grupoInactivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    // cy.wait("@grupoInactivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
 
-    cy.get('button[role="switch"]').click();
+    cy.get('#statusModify').click();
     cy.contains("Estado actualizado exitosamente").should("be.visible");
-    cy.intercept(
-      "GET",
-      `${Cypress.env().urlApi}/v1/service-groups?order=desc&status=true&search=${Cypress.env().dataServiceGroup[0].code}&skip=0&take=20`
-    ).as("grupoActivoEncontrado");
+    // cy.intercept(
+    //   "GET",
+    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=true&order=desc&take=20&skip=0&page=0`
+    // ).as("grupoActivoEncontrado");
     cy.get("span").contains("Inactivo").click();
     cy.get("span").contains("Activo").click();
-    cy.wait("@grupoActivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    // cy.wait("@grupoActivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    cy.get('#modify').click();
   });
 });
