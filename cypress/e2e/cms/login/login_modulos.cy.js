@@ -1,23 +1,23 @@
 describe("test login", () => {
   beforeEach(() => {
     cy.viewport(1024, 768);
-    cy.visit("https://dev.citas-multisalud.com/");
+    cy.visit(Cypress.env().hostName);
   });
 
   it("acceso incorrecto", () => {
     cy.get("#email").type("usuarioincorrecto@email.com");
     cy.get("#password").type("passwordincorrecta");
     
-    cy.intercept("POST", "https://dev.citas-multisalud.com/api/auth/callback/credentials?").as("auth");
+    cy.intercept("POST", `${Cypress.env().hostName}/api/auth/callback/credentials?`).as("auth");
     cy.get("button").contains("Iniciar sesión").click();
     cy.wait('@auth').its('response.statusCode').should('eq', 401)
   });
 
   it("acaceso correcto y comprueba modulos", () => {
-    cy.get("#email").type("jhohanf.silva@gmail.com");
-    cy.get("#password").type("Multisalud@2024");
+    cy.get("#email").type(Cypress.env().dataOperators[0].email);
+    cy.get("#password").type(Cypress.env().dataOperators[0].password);
 
-    cy.intercept("GET", "https://api-dev.citas-multisalud.com/v1/modules/operator").as("modulos");
+    cy.intercept("GET", `${Cypress.env().urlApi}/v1/modules/operator`).as("modulos");
 
     cy.get("button").contains("Iniciar sesión").click();
     cy.get("h2").contains("MultiSalud SAS").should("be.visible");

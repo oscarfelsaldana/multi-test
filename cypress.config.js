@@ -7,10 +7,10 @@ module.exports = defineConfig({
     },
   },
   env: {
-    hostName: "http://localhost:3000",
-    urlApi: "http://localhost:8080",
-    // hostName: "https://dev.citas-multisalud.com",
-    // urlApi: "https://api-dev.citas-multisalud.com",
+    // hostName: "http://localhost:3000",
+    // urlApi: "http://localhost:8080",
+    hostName: "https://dev-cms.solvatico.com",
+    urlApi: "https://api-dev.citas-multisalud.com",
     testDate: "2024-11-12",
     dataOperators: [
       // {

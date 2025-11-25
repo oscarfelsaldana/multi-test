@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "cypress": "^13.14.2",
+    "cypress-real-events": "^1.14.0",
     "moment": "^2.30.1"
   },
   "devDependencies": {

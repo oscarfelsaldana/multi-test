@@ -20,7 +20,6 @@ describe("Test grupos de servicio", (module = "Citas") => {
     cy.visit(`${Cypress.env().hostName}/hc/configuracion/plantillas`);
     cy.get("button").contains("Nueva plantilla").should("be.visible");
     cy.get("button").contains("Nueva plantilla").click();
-
     cy.get("p").contains("Cree o actualice una plantilla").should("be.visible");
     cy.get("#name").type(`${Cypress.env().dataTemplates[0].name}`);
     cy.get("#description").type(`${Cypress.env().dataTemplates[0].description}`);
@@ -29,13 +28,21 @@ describe("Test grupos de servicio", (module = "Citas") => {
     cy.wait("@creacionCorrecta").its("response.statusCode").should("eq", 200);
   });
 
-  it("busca y agrega etiqueta a una plantilla", () => {
+  it.only("busca y edita una plantilla", () => {
     cy.visit(`${Cypress.env().hostName}/hc/configuracion/plantillas`);
     cy.get('#search').type(`${Cypress.env().dataTemplates[0].name}`);
-    cy.get(`#${Cypress.env().dataTemplates[0].name}_labels`).click();
-    cy.intercept("POST", `**/v1/template-template-labels`).as("etiquetaAgregada");
-    cy.get(`#label_0`).click();
-    cy.wait("@etiquetaAgregada").its("response.statusCode").should("eq", 200);
+    cy.get('#status').click();
+    cy.get('span').contains('Borrador').click();
+    cy.get(`#${Cypress.env().dataTemplates[0].name}_modify`).click();
+
+    cy.get('#InputText_element').trigger('dragstart', {
+      dataTransfer: new DataTransfer()
+    });
+
+    cy.get('#workspace').trigger('drop', {
+      dataTransfer: new DataTransfer()
+    });
+
   });
 
   it("busca y elimina etiqueta a una plantilla", () => {

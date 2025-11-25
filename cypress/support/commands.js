@@ -10,3 +10,6 @@ Cypress.Commands.add("login", ({ email, password, module }) => {
 });
 
 Cypress.Commands.add("permiso", ({ permiso, id }) => {});
+
+import '@4tw/cypress-drag-drop';
+import 'cypress-real-events/support';

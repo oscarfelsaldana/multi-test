@@ -82,16 +82,15 @@ describe("Test servicio", (module = "Citas") => {
     });
   });
 
-  it("busca y edita servicio", () => {
-    var cod = 2;
-
+  it ("busca y edita servicio", () => {
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/servicios`);
-    // cy.intercept(
-    //   "GET",
-    //   `${Cypress.env().urlApi}/v1/services?search=${Cypress.env().dataServices[0].code}&status=&order=desc&take=20&skip=0&page=0`
-    // ).as("servicioEncontrado");
+    cy.intercept(
+      'GET',
+      new RegExp(`/v1/services\\?.*search=${Cypress.env().dataServices[0].code}`)
+    ).as('servicioEncontrado');
     cy.get('#search').type(Cypress.env().dataServices[0].code);
-    // cy.wait("@servicioEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+    cy.wait("@servicioEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+
     cy.get('#modify').click();
     cy.get("p").contains("Cree o actualice un servicio").should("be.visible");
     cy.get("#description").type("-Edit");
