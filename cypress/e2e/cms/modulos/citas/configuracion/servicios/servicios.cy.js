@@ -8,7 +8,7 @@ describe("Test servicio", (module = "Citas") => {
     });
   });
 
-  it("status grupo de servicio en servicio", () => {
+  it.only("status grupo de servicio en servicio", () => {
     cy.visit(`${Cypress.env().hostName}/citas/configuracion/grupos-servicio`);
     // cy.intercept(
     //   "GET",

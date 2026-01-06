@@ -1,9 +1,10 @@
 const { defineConfig } = require("cypress");
 
-var consec = 24110400;
+var consec = 24110401;
 module.exports = defineConfig({
   e2e: {
     setupNodeEvents(on, config) {
+      
     },
   },
   env: {
@@ -12,7 +13,7 @@ module.exports = defineConfig({
     hostName: "https://dev-cms.solvatico.com",
     urlApi: "https://api-dev.citas-multisalud.com",
     testDate: "2024-11-12",
-    dataOperators: [
+    dataOperators: [ 
       // {
       //   email: "jhohanf.silva@gmail.com",
       //   password: "Multisalud@2024"
@@ -38,21 +39,26 @@ module.exports = defineConfig({
     ],
     dataServiceGroup: [
       {
-        code: "GRUPSERV" + consec,
-        description: "GrupoServicioCy" + consec,
+        code: "GRUPOSERV-1767045116336",
+        description: "Descripción",
       },
     ],
     dataServices: [
       {
-        code: "SERVICIO" + consec,
+        code: "021047",
         description: "Servicio" + consec + " Cy",
       }
     ],
-    dataSpecializations: [
+    dataSpecializations: [ 
       {
-        code: "ESPECIALIDAD" + consec,
-        description: "Especialidad" + consec,
+        code: "80", 
+        description: "MÉDICO GENERAL",
       },      
+    ],
+    dataOcupaciones: [
+      {
+        name: "ingeniero85",
+      }
     ],
     dataOffices: [
       {
@@ -72,30 +78,46 @@ module.exports = defineConfig({
     ],
     dataHealthCompanies: [
       {
-        code: "EPS0" + consec,
+        code: "EPS683",
         taxIDNumber: "100000000" + consec,
         name: "Aseguradora" + consec + "Cy",
         regime: "Contributivo",
-        address: "Caudal Villavicencio",
+        address: "Calle 1 #10-10",
+        addressEdited: "Calle 1 #10-10 editada",
       },      
     ],
     dataPatients: [
       {
         documentType: "Cédula de ciudadanía",
         documentNumber: "10000" + consec,
-        firstName: "Paciente1",
+        firstName: "Paciente",
+        secondName: "Prueba",
         firstSurname: "Cypress",
+        secondSurname: "Automatización",
         rhFactor: "O+",
+        sex: "Hombre",
+        maritalStatus: "Soltero(a)",
         gender: "Masculino",
         ethnicity: "Otras etnias",
-        birthDate: "2000-01-01",
+        birthDate: "2001-01-01",
         regime: "Contributivo",
-        municipality: "Villavicencio",
+        municipality: "Villavicencio - Meta",
         academicLevel: "Profesional",
         phoneNumber: "3127143001",
-        secondPhoneNumber: "3127143001",
+        secondPhoneNumber: "3222207862",
         address: "Calle 1 #10-10",
         email: `paciente_${consec}Cy@gmail.com`,
+        occupationSearch: "Dev",
+        occupationLabel: "Dev - Desarrollador de sistemas",
+        healthCompanySearch: "sani",
+        contractSearch: "0001",
+        contractLabel: "capitado - 0001 - sanitas-capitado",
+        novelty: "Presenta queja",
+        disabilityType: "Discapacidad visual",
+        judicialSentence: "Patología crónica",
+        incomeRange: "1 - Menor a 2 SMLMV",
+        affiliationType: "Beneficiario",
+        contributorDocumentNumber: "1234567890"
       }      
     ],
     dataDoctors: [

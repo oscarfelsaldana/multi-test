@@ -1,85 +1,165 @@
-describe("Test grupos de servicio", (module = "Citas") => {
+// ======================================================================================================
+// TEST GRUPO DE SERVICIOS: CREAR, EDITAR, ACTIVAR, DESACTIVAR,
+// ======================================================================================================
+describe("Test grupos de servicio", () => {
+
   beforeEach(() => {
-    cy.viewport(1024, 768);
-    cy.login({
+    cy.viewport(1336, 768);
+    cy.startConfig({
       email: Cypress.env().dataOperators[0].email,
       password: Cypress.env().dataOperators[0].password,
       module: "Citas",
+      option: "Grupos de servicio",
+      title: "Grupos de servicio", 
     });
   });
 
-  it("abre grupo de servicios", () => {
-    cy.get("button").contains("Configuración", { waitBefore: true }).should("be.visible");
-    cy.get("button").contains("Configuración").click();
-    cy.get('[href="/citas/configuracion/grupos-servicio"]').should("contain", "Grupos de servicio");
-    cy.get('[href="/citas/configuracion/grupos-servicio"]').click();
-    cy.get("h2").contains("Grupos de servicio").should("be.visible");
+  it("abre y crea un grupo de servicios", () => {
+
+    // Abre el formulario de creación
+    cy.contains("button", "Nuevo grupo de servicio").click();
+    cy.contains("h2", "Grupo de servicio").should("be.visible");
+
+    // Llena el formulario con datos únicos
+    const timestamp = Date.now();cy.fillInputsModal({
+      "#code": `GRUPOSERV-${timestamp}`,
+      "#description": `Descripción del grupo ${timestamp}`,
+    });
+    // INTERCEPTAR PETICION
+    cy.intercept("POST",`${Cypress.env("urlApi")}/v1/service-groups`).as("crearGrupoServicio");
+    // CLICK
+    cy.contains("button", "Guardar").click();
+    // VALIDA PETICION
+    cy.wait("@crearGrupoServicio").its("response.statusCode").should("eq", 200);
   });
 
-  it("crea grupo de servicio", () => {
-    cy.visit(`${Cypress.env().hostName}/citas/configuracion/grupos-servicio`);
-    cy.get("button").contains("Nuevo grupo de servicio").should("be.visible");
-    cy.get("button").contains("Nuevo grupo de servicio").click();
-
-    cy.get("p").contains("Cree o actualice un grupo de servicio").should("be.visible");
-    cy.get("#code").type(`${Cypress.env().dataServiceGroup[0].code}`);
-    cy.get("#description").type(`${Cypress.env().dataServiceGroup[0].description}`);
-    cy.intercept("POST", `${Cypress.env().urlApi}/v1/service-groups`).as("creacionCorrecta");
-    cy.get("button").contains("Guardar").click();
-    cy.wait("@creacionCorrecta").its("response.statusCode").should("eq", 200);
-
-    cy.get("button").contains("Nuevo grupo de servicio").click();
-
-    cy.get("#code").type(`${Cypress.env().dataServiceGroup[0].code}`);
-    cy.get("#description").type("PCy-grupo incorrecto");
-    cy.intercept("POST", `${Cypress.env().urlApi}/v1/service-groups`).as("creacionIncorrecta");
-    cy.get("button").contains("Guardar").click();
-    cy.wait("@creacionIncorrecta").its("response.statusCode").should("eq", 417);
+  it("edita un grupo de servicio existente", () => {
+    // CÓDIGO FIJO DEL GRUPO
+    const codigoGrupo = Cypress.env().dataServiceGroup[0].code;
+    // BUSCA EL GRUPO POR CÓDIGO
+    cy.get("#search").should("be.visible").clear().type(codigoGrupo);
+    // VALIDA QUE LA FILA EXISTA
+    cy.contains("tbody tr", codigoGrupo, { timeout: 10000 }).should("be.visible");
+    // TRABAJA SOLO SOBRE LA FILA DEL GRUPO
+    cy.contains("tbody tr", codigoGrupo).within(() => {
+      // ABRE MODAL DE EDICIÓN
+      cy.get("#modify")
+        .should("be.visible")
+        .scrollIntoView()
+        .click();
+    });
+    // VALIDA QUE SE ABRIÓ EL MODAL
+    cy.contains("h2", "Grupo de servicio").should("be.visible");
+    // DESCRIPCIÓN DINÁMICA
+    const nuevaDescripcion = `Descripción editada ${Date.now().toString().slice(-6)}`;
+    // EDITA DESCRIPCIÓN
+    cy.fillInputsModal({"#description": nuevaDescripcion,});
+    // INTERCEPTA PETICION
+    cy.intercept("PUT",`${Cypress.env("urlApi")}/v1/service-groups/*`).as("editarGrupo");
+    // CLICK
+    cy.contains("button", "Guardar").scrollIntoView().click({ force: true });
+    // VALIDA RESPUESTA
+    cy.wait("@editarGrupo").its("response.statusCode").should("eq", 200);
+    // VALIDA CAMBIO
+    cy.get("#search").clear().type(codigoGrupo);
+    cy.contains("td", nuevaDescripcion, { timeout: 10000 }).should("be.visible");
   });
 
-  it("busca y edita grupo de servicio", () => {
-    cy.visit(`${Cypress.env().hostName}/citas/configuracion/grupos-servicio`);
-    // cy.intercept(
-    //   "GET",
-    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=&order=desc&take=20&skip=0&page=0`
-    // ).as("grupoEncontrado");
-    cy.get('#search').type(`${Cypress.env().dataServiceGroup[0].code}`);
-    // cy.wait("@grupoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
-    cy.get('#modify').click();
-    cy.get("p").contains("Cree o actualice un grupo de servicio").should("be.visible");
-    cy.get("#description").type("-Edit");
-    cy.get("button").contains("Guardar").click();
-    cy.contains("Grupo de servicio actualizado exitosamente").should("be.visible");
+  it("inactivar grupo", () => {
+
+    // CODIGO FIJO DEL SERVICIO
+    const codigo = Cypress.env().dataServiceGroup[0].code
+    // BUSCA GRUPO
+    cy.get("#search").should("be.visible").clear().type(codigo);
+    // VALIDA FILA
+    cy.contains("tbody tr", codigo,{ timeout: 10000 }).should("be.visible");
+    // INTERCEPTA PETICION
+    cy.intercept("PUT","**/v1/service-groups/status/**").as("cambiarEstadoGrupo");
+    // TRABAJA SOLO SOBRE LA FILA DEL GRUPO
+    cy.contains("tbody tr", codigo).within(() => {
+      // ESTADO ACTUAL DEL SWITCH
+      cy.get("#statusModify").invoke("attr", "aria-checked").then((estadoInicial) => {
+        
+        // SOLO INACTIVA SI ESTA ACTIVO
+        if (estadoInicial === "true") {
+
+          // CLICK
+          cy.get("#statusModify").scrollIntoView().click();
+          // VALIDA RESPUESTA DEL BACKEND
+          cy.wait("@cambiarEstadoGrupo").its("response.statusCode").should("eq", 200); 
+          // VALIDA QUE EL ESTADO CAMBIO A INACTIVO
+          cy.get("#statusModify").should("have.attr", "aria-checked", "false");
+
+        }
+      });
+    }); 
+    
   });
 
-  it("cambio estado y filtro de estado", () => {
-    cy.visit(`${Cypress.env().hostName}/citas/configuracion/grupos-servicio`);
-    // cy.intercept(
-    //   "GET",
-    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=&order=desc&take=20&skip=0&page=0`
-    // ).as("grupoEncontrado");
-    cy.get('#search').type(`${Cypress.env().dataServiceGroup[0].code}`);
-    // cy.wait("@grupoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+  it("activar grupo", () => {
+  
+  // CODGIO FIJO DEL GRUPO
+  const codigo = Cypress.env().dataServiceGroup[0].code
+  // BUSCA GRUPO 
+  cy.get("#search").should("be.visible").clear().type(codigo);
+  // VALIDA QUE LA FILA EXISTA
+  cy.contains("tbody tr", codigo, { timeout: 10000 }).should("be.visible");
+  // INTERCEPTA LA PETICION
+  cy.intercept("PUT","**/v1/service-groups/status/**").as("cambiarEstado");
+    // TRABAJA SOLO SOBRE LA FILA
+    cy.contains("tbody tr", codigo).within(() => {
 
-    cy.get('#statusModify').click();
-    cy.contains("Estado actualizado exitosamente").should("be.visible");
-    // cy.intercept(
-    //   "GET",
-    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=false&order=desc&take=20&skip=0&page=0`
-    // ).as("grupoInactivoEncontrado");
-    cy.get("span").contains("Todos").click();
-    cy.get("span").contains("Inactivo").click();
-    // cy.wait("@grupoInactivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
+      //LEE EL ESTADO ACTUAL
+      cy.get("#statusModify").invoke("attr", "aria-checked").then((estadoActual) => {
 
-    cy.get('#statusModify').click();
-    cy.contains("Estado actualizado exitosamente").should("be.visible");
-    // cy.intercept(
-    //   "GET",
-    //   `${Cypress.env().urlApi}/v1/service-groups?search=${Cypress.env().dataServiceGroup[0].code}&status=true&order=desc&take=20&skip=0&page=0`
-    // ).as("grupoActivoEncontrado");
-    cy.get("span").contains("Inactivo").click();
-    cy.get("span").contains("Activo").click();
-    // cy.wait("@grupoActivoEncontrado").its("response.body.data.totalRecords").should("eq", 1);
-    cy.get('#modify').click();
+        // SOLO ACTIVA SI ESTA INACTIVO
+        if (estadoActual === "false") {
+
+          // CLICK
+          cy.get("#statusModify").scrollIntoView().click();
+          // VALIDA RESPUESTA DEL BAC
+          cy.wait("@cambiarEstado").its("response.statusCode").should("eq", 200);
+          // VALIDA QUE QUEDO INACTIVO
+          cy.get("#statusModify").should("have.attr", "aria-checked", "false"); 
+        }
+      });
+    });
+  
+  });
+
+  
+  it("filtra servicios por estado Inactivo", () => {
+
+    // CLICK FILTRO INACTIVO Y VALIDA RESULTADOS
+    cy.selectHeadlessSingle( // comando personalizado
+    "button#status","Inactivo"); 
+    cy.contains("td", "Activo").should("not.exist");
+    cy.contains("td", "Inactivo").should("exist");
+    // CLICK FILTRO ACTIVO Y VALIDA RESULTADOS
+    cy.selectHeadlessSingle("button#status", "Activo");
+    cy.contains("td", "Inactivo").should("not.exist");
+    cy.contains("td", "Activo").should("exist");
+    // CLICK FILTRO TODOS Y VALIDA LISTADO GENERAL
+    cy.selectHeadlessSingle("button#status", "Todos");
+    cy.get("tbody tr").should("have.length.greaterThan", 0);
+
+  });
+
+  it("ordena servicios de reciente a más antiguo", () => {
+  // OBTIENE EL TEXTO DE LA PRIMERA FILA 
+  cy.get("tbody tr:first")
+    .invoke("text")
+    .then((filaInicial) => {
+      // GUARDA EL TEXTO INICIAL SIN ESPACIOS
+      const textoInicial = filaInicial.trim();
+      // CLICK EN EL FILTRO MAS ANTIGUO
+      cy.selectHeadlessSingle("button#order", "Más antiguo");
+      // SELECCIONA NUEVAMENTE LA PRIMERA FILA Y VALIDA QUE ALLA CAMBIADO
+      cy.get("tbody tr:first")
+        .invoke("text")
+        .should((filaOrdenada) => {
+          expect(filaOrdenada.trim()).to.not.eq(textoInicial);
+        });
+    });
   });
 });

@@ -6,7 +6,7 @@ describe("Test especialidades", (module = "Citas") => {
       password: Cypress.env().dataOperators[0].password,
       module: "Citas",
     });
-  });
+  }); 
 
   it("abre especialidades", () => {
     cy.get("button").contains("Configuración").should("be.visible");
